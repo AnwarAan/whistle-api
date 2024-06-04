@@ -37,7 +37,7 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public User mapToUserResponse(User user) {
+  private User mapToUserResponse(User user) {
     return User.builder().id(user.getId()).name(user.getName()).email(user.getEmail()).build();
   }
 }

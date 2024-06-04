@@ -29,7 +29,6 @@ public class UserController {
   @GetMapping
   public ResponseEntity<ResponseData<List<User>>> findAllUser() {
     List<User> data = userService.findAllUser();
-    System.out.println("=========================USER CONTROLLER=========================");
     return ResponseEntity.ok(ResponseData.responseSucceess(data));
   }
 
