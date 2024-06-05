@@ -38,6 +38,12 @@ public class UserController {
     return ResponseEntity.ok(ResponseData.responseSucceess(data));
   }
 
+  @GetMapping("/user-post")
+  public ResponseEntity<ResponseData<List<User>>> findUserPost() {
+    List<User> data = userService.findUserAndPost();
+    return ResponseEntity.ok(ResponseData.responseSucceess(data));
+  }
+
   @PutMapping("/{id}")
   public ResponseEntity<ResponseData<Object>> updateUser(@PathVariable Long id, @RequestParam String name) {
     userService.updateUser(id, name);

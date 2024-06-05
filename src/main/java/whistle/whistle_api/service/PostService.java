@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.model.Post;
+import whistle.whistle_api.model.User;
 import whistle.whistle_api.repository.PostRepository;
 
 @Service

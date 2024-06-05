@@ -19,13 +19,17 @@ public class UserService {
   public List<User> findAllUser() {
     List<User> users = userRepository.findAll();
     return users.stream().map(this::mapToUserResponse).toList();
-
   };
 
   public User findAUserById(Long id) {
     User user = userRepository.findById(id).orElseThrow();
     return user;
   };
+
+  public List<User> findUserAndPost() {
+    List<User> user = userRepository.findUserAndPost();
+    return user.stream().map(this::mapToUserPost).toList();
+  }
 
   public void updateUser(Long id, String name) {
     User user = userRepository.findById(id).orElseThrow();
@@ -38,6 +42,11 @@ public class UserService {
   }
 
   private User mapToUserResponse(User user) {
-    return User.builder().id(user.getId()).name(user.getName()).email(user.getEmail()).build();
+    return User.builder().id(user.getId()).name(user.getName()).email(user.getEmail()).role(user.getRole()).build();
+  }
+
+  private User mapToUserPost(User user) {
+    return User.builder().name(user.getName()).email(user.getEmail()).role(user.getRole()).posts(user.getPosts())
+        .build();
   }
 }

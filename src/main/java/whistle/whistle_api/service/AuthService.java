@@ -37,7 +37,6 @@ public class AuthService {
 
     User user = User.builder().name(name).email(email).password(passwordEncoder.encode(password)).role(role)
         .createAt(new Date()).updateAt(new Date()).build();
-    System.out.println("====================" + user + "====================");
     userRepository.save(user);
   }
 
