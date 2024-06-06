@@ -35,8 +35,9 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseData<Object>> createPost(@RequestParam String post, @RequestParam String imageUrl) {
-        postService.createPost(post, imageUrl);
+    public ResponseEntity<ResponseData<Object>> createPost(@RequestParam Long userId, @RequestParam String post,
+            @RequestParam String imageUrl) {
+        postService.createPost(userId, post, imageUrl);
         return ResponseEntity.ok(ResponseData.responseSucceess());
     }
 

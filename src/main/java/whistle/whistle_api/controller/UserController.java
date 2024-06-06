@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.dto.ResponseData;
 import whistle.whistle_api.model.User;
+import whistle.whistle_api.repository.PostRepository;
 import whistle.whistle_api.service.UserService;
 
 import java.util.List;
