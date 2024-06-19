@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.model.User;
+import whistle.whistle_api.repository.PostRepository;
 import whistle.whistle_api.repository.UserRepository;
 
 @Repository
@@ -15,6 +16,9 @@ public class UserService {
 
   @Autowired
   private final UserRepository userRepository;
+
+  @Autowired
+  private final PostRepository postRepository;
 
   public List<User> findAllUser() {
     List<User> users = userRepository.findAll();
@@ -37,7 +41,8 @@ public class UserService {
   }
 
   private User mapToUserResponse(User user) {
-    return User.builder().id(user.getId()).name(user.getName()).email(user.getEmail()).role(user.getRole()).build();
+    return User.builder().id(user.getId()).name(user.getName()).email(user.getEmail()).role(user.getRole())
+        .posts(postRepository.findByUser(user)).createAt(user.getCreateAt()).updateAt(user.getUpdateAt()).build();
   }
 
 }
