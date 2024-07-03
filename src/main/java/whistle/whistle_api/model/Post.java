@@ -42,6 +42,10 @@ public class Post {
     @JsonIgnore
     private User user;
 
+    @Column(name = "like_count", nullable = false)
+    @Builder.Default
+    private Long likeCount = 0L;
+
     @CreatedDate
     @Column(updatable = false, name = "created_at")
     private Date createdAt;
