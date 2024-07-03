@@ -16,6 +16,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import whistle.whistle_api.exception.JwtExpiredException;
+import whistle.whistle_api.exception.UnauthorizedException;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
   protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain)
       throws ServletException, IOException {
-    if (request.getServletPath().contains("/api")) {
+    if (request.getServletPath().contains("/api/auth")) {
       filterChain.doFilter(request, response);
       return;
     }
@@ -45,7 +47,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
+      } else {
+        System.out.println("=================");
+        throw new JwtExpiredException("Expired Token");
       }
+    } else {
+      throw new UnauthorizedException();
     }
     filterChain.doFilter(request, response);
   }

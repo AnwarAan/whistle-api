@@ -29,7 +29,7 @@ public class AuthService {
   @Autowired
   private final JwtService jwtService;
 
-  public void register(String name, String email, String password, String role) {
+  public User register(String name, String email, String password, String role) {
     Optional<User> checkUser = userRepository.findByEmail(email);
     if (checkUser.isPresent()) {
       throw new EmailAlreadyExistException();
@@ -38,6 +38,7 @@ public class AuthService {
     User user = User.builder().name(name).email(email).password(passwordEncoder.encode(password)).role(role)
         .createAt(new Date()).updateAt(new Date()).build();
     userRepository.save(user);
+    return user;
   }
 
   public ResponseAuth login(String email, String password) {
