@@ -34,3 +34,5 @@ build/
 
 ### Environment ###
 .env
+.*/application.properties
+./src/main/java/whistle/whistle_api/resources/application.properties
