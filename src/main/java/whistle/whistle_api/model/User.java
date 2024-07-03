@@ -44,7 +44,6 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Post> posts;
 
-
   @CreationTimestamp
   @Column(updatable = false, name = "created_at")
   private Date createAt;

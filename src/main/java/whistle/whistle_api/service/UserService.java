@@ -30,6 +30,11 @@ public class UserService {
     return user;
   };
 
+  public User findUserByEmail(String email) {
+    User user = userRepository.findByEmail(email).orElseThrow();
+    return user;
+  };
+
   public void updateUser(Long id, String name) {
     User user = userRepository.findById(id).orElseThrow();
     user.setName(name);
