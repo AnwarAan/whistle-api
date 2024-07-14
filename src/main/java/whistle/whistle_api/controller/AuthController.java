@@ -4,12 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.dto.ResponseAuth;
 import whistle.whistle_api.dto.ResponseData;
+import whistle.whistle_api.dto.UserDto;
 import whistle.whistle_api.model.User;
 import whistle.whistle_api.service.AuthService;
 
@@ -29,8 +31,15 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<ResponseData<ResponseAuth>> login(@RequestParam String email, @RequestParam String password) {
-    ResponseAuth responseAuth = authService.login(email, password);
+  public ResponseEntity<ResponseData<ResponseAuth>> login(@RequestBody UserDto user) {
+    System.out.println("==========================");
+    ResponseAuth responseAuth = authService.login(user);
     return ResponseEntity.ok(ResponseData.responseSucceess(responseAuth));
+  }
+
+  @PostMapping("/activate")
+  public ResponseEntity<ResponseData<Object>> activate(@RequestParam Long userId) {
+    authService.activateUser(userId);
+    return ResponseEntity.ok(ResponseData.responseSucceess());
   }
 }

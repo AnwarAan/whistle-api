@@ -36,27 +36,25 @@ public class LikeService {
     if (likeRepository.existsByUserIdAndPostIdUsingQuery(user.getId(), postId)) {
       throw new ForbiddenException("User has Linked to Post");
     } else {
-      System.out.println("==========OR THIS==========");
-
-      // Post post = postService.findPostById(postId);
-      // Like like = Like.builder().user(user).post(post).build();
-      // likeRepository.save(like);
-      // post.setLikeCount(post.getLikeCount() + 1);
-      // postService.updatePost(post);
+      Post post = postService.findPostById(postId);
+      Like like = Like.builder().user(user).post(post).build();
+      likeRepository.save(like);
+      post.setLikeCount(post.getLikeCount() + 1);
+      postService.updatePost(post);
     }
   }
 
   @Transactional
   public void dislikePost(User user, Long postId) {
     Optional<Like> chekLike = likeRepository.findByPostIdAndUserId(user.getId(), postId);
-    System.out.println("==========THIS==========");
     System.out.println(chekLike);
     if (!chekLike.isPresent()) {
       throw new NotFoundException("Like");
+    } else {
+      Post post = postService.findPostById(postId);
+      post.setLikeCount(post.getLikeCount() - 1);
+      likeRepository.deleteLikeByPostIdAndUserId(user.getId(), postId);
     }
-    // Post post = postService.findPostById(postId);
-    // post.setLikeCount(post.getLikeCount() - 1);
-    // likeRepository.deleteLikeByPostIdAndUserId(user.getId(), postId);
   }
 
   public Long eventLike(Long postId) {

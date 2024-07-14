@@ -32,7 +32,7 @@ public class Post {
     private Long id;
 
     @Column(length = 1000)
-    private String post;
+    private String content;
 
     @Column(name = "image_url", length = 1000)
     private String imageUrl;

@@ -10,6 +10,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,13 +36,26 @@ public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(nullable = false)
   private String name;
+
   @Column(nullable = false, unique = true)
   private String email;
+
   @Column(nullable = false)
   private String password;
+
+  @Column(length = 1000)
+  private String imageUr;
+
   private String role;
 
+  @Builder.Default
+  @Column(nullable = false)
+  private Boolean status = false;
+
+  @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
   private List<Post> posts;
 

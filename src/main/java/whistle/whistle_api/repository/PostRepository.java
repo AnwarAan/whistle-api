@@ -12,4 +12,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByUser(User user);
+
+    List<Post> findPostByUserId(Long userId);
 }

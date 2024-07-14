@@ -9,5 +9,4 @@ public class WhistleApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WhistleApiApplication.class, args);
 	}
-
 }

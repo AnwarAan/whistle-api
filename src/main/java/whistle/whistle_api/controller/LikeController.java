@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.dto.ResponseData;
-import whistle.whistle_api.exception.NotFoundException;
 import whistle.whistle_api.helper.ExtractUser;
 import whistle.whistle_api.model.Like;
 import whistle.whistle_api.model.User;
@@ -51,15 +50,16 @@ public class LikeController {
   }
 
   @PostMapping
+  @CrossOrigin("http://localhost:3000")
   public ResponseEntity<ResponseData<Object>> createLike(HttpServletRequest request, @RequestParam Long postId) {
-    User user = extractUser.extractUser(request);
+    User user = extractUser.extract(request);
     likeService.likePost(user, postId);
     return ResponseEntity.ok(ResponseData.responseSucceess());
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<ResponseData<Object>> dislikePost(HttpServletRequest request, @PathVariable Long id) {
-    User user = extractUser.extractUser(request);
+    User user = extractUser.extract(request);
     likeService.dislikePost(user, id);
     return ResponseEntity.ok(ResponseData.responseSucceess());
   }

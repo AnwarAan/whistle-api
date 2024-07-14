@@ -36,4 +36,5 @@ public class ResponseError {
   public static ResponseError jwtExpired(String msg) {
     return ResponseError.builder().statusCode(HttpStatus.FORBIDDEN.value()).message(msg).build();
   }
+
 }

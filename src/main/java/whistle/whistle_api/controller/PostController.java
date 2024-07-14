@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import whistle.whistle_api.dto.PostDto;
 import whistle.whistle_api.dto.ResponseData;
 import whistle.whistle_api.helper.ExtractUser;
 import whistle.whistle_api.model.Post;
@@ -32,8 +33,9 @@ public class PostController {
     private final ExtractUser extractUser;
 
     @GetMapping
-    public ResponseEntity<ResponseData<List<Post>>> findAllPost() {
-        List<Post> posts = postService.findAllPost();
+    public ResponseEntity<ResponseData<List<PostDto>>> findAllPost(HttpServletRequest request) {
+        User user = extractUser.extract(request);
+        List<PostDto> posts = postService.findPostByUserId(user.getId());
         return ResponseEntity.ok(ResponseData.responseSucceess(posts));
     }
 
@@ -47,7 +49,7 @@ public class PostController {
     public ResponseEntity<ResponseData<Object>> createPost(HttpServletRequest request,
             @RequestParam String post,
             @RequestParam String imageUrl) {
-        User user = extractUser.extractUser(request);
+        User user = extractUser.extract(request);
         postService.createPost(user, post, imageUrl);
         return ResponseEntity.ok(ResponseData.responseSucceess());
     }

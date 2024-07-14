@@ -16,8 +16,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import whistle.whistle_api.exception.JwtExpiredException;
-import whistle.whistle_api.exception.UnauthorizedException;
 
 @Component
 @RequiredArgsConstructor
@@ -47,12 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             userDetails.getAuthorities());
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
-      } else {
-        System.out.println("=================");
-        throw new JwtExpiredException("Expired Token");
       }
-    } else {
-      throw new UnauthorizedException();
     }
     filterChain.doFilter(request, response);
   }

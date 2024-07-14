@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import whistle.whistle_api.dto.ResponseError;
 
@@ -38,5 +39,11 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ResponseError> jwtExpired(JwtExpiredException ex) {
     ResponseError responseError = ResponseError.jwtExpired("JWT Expired");
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseError);
+  }
+
+  @ExceptionHandler(MaxUploadSizeExceededException.class)
+  public ResponseEntity<ResponseError> handleMaxSizeException(MaxUploadSizeExceededException ex) {
+    ResponseError responseError = ResponseError.builder().statusCode(400).message("File to Large").build();
+    return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(responseError);
   }
 }

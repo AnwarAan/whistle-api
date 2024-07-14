@@ -19,7 +19,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-  private static final String[] WHITE_LIST = { "/api/auth/**", "/api/user/**", "/api/post/**", "/api/like/**" };
+  private static final String[] WHITE_LIST = { "/api/auth/**", "/api/user/**", "/api/post/**", "/api/like/**",
+      "/api/user-follower/**", "/api/upload" };
   private final JwtAuthFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
 

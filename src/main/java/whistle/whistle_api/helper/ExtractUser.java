@@ -14,12 +14,13 @@ import whistle.whistle_api.security.JwtService;
 @RequiredArgsConstructor
 public class ExtractUser {
 
+  @Autowired
   private final JwtService jwtService;
 
   @Autowired
   private UserRepository userRepository;
 
-  public User extractUser(@NonNull HttpServletRequest request) {
+  public User extract(@NonNull HttpServletRequest request) {
     String authHeader = request.getHeader("Authorization");
     String jwtToken;
     String userEmail;
@@ -28,4 +29,5 @@ public class ExtractUser {
     User user = userRepository.findByEmail(userEmail).orElseThrow();
     return user;
   }
+
 }
