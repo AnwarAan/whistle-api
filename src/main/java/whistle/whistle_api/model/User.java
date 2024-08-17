@@ -1,5 +1,6 @@
 package whistle.whistle_api.model;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -19,6 +21,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -40,20 +44,33 @@ public class User implements UserDetails {
   @Column(nullable = false)
   private String name;
 
-  @Column(nullable = false, unique = true)
+  @Column(unique = true, nullable = false)
+  private String username;
+
+  @Column(unique = true, nullable = false)
   private String email;
 
   @Column(nullable = false)
   private String password;
 
   @Column(length = 1000)
-  private String imageUr;
+  private String imageUrl;
 
   private String role;
+
+  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+  private LocalDate dob;
 
   @Builder.Default
   @Column(nullable = false)
   private Boolean status = false;
+
+  @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY)
+  private List<UserFollower> follower;
+
+  @ManyToOne
+  @JoinColumn(name = "file_image_id")
+  private FileImage fileImage;
 
   @JsonIgnore
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
