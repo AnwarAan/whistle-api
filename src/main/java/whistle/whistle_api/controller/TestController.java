@@ -16,7 +16,7 @@ public class TestController {
   @Autowired
   TestService testService;
 
-  @PostMapping("/test")
+  @PostMapping("/user")
   public ResponseEntity<ResponseData<?>> addUser(@RequestParam String name,
       @RequestParam String email, @RequestParam String password, @RequestParam LocalDate dob,
       @RequestParam String role) {
