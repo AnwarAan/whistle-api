@@ -47,7 +47,6 @@ public class LikeService {
   @Transactional
   public void dislikePost(User user, Long postId) {
     Optional<Like> chekLike = likeRepository.findByPostIdAndUserId(user.getId(), postId);
-    System.out.println(chekLike);
     if (!chekLike.isPresent()) {
       throw new NotFoundException("Like");
     } else {
