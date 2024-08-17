@@ -1,6 +1,8 @@
 package whistle.whistle_api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,17 +26,18 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
-  public ResponseEntity<ResponseData<User>> register(@RequestParam String name, @RequestParam String email,
-      @RequestParam String password, @RequestParam String role) {
-    authService.register(name, email, password, role);
+  public ResponseEntity<ResponseData<User>> register(@RequestBody UserDto user) {
+    authService.register(user);
     return ResponseEntity.ok(ResponseData.responseSucceess());
   }
 
   @PostMapping("/login")
   public ResponseEntity<ResponseData<ResponseAuth>> login(@RequestBody UserDto user) {
-    System.out.println("==========================");
     ResponseAuth responseAuth = authService.login(user);
-    return ResponseEntity.ok(ResponseData.responseSucceess(responseAuth));
+    ResponseCookie cookie = ResponseCookie.from("access_token", responseAuth.getAccessToken()).secure(false)
+        .httpOnly(false).path("/").maxAge(86400000).build();
+    return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+        .body(ResponseData.responseSucceess(responseAuth));
   }
 
   @PostMapping("/activate")
