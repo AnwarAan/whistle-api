@@ -1,15 +1,18 @@
 package whistle.whistle_api.service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.dto.PostDto;
 import whistle.whistle_api.exception.NotFoundException;
+import whistle.whistle_api.model.FileImage;
 import whistle.whistle_api.model.Post;
 import whistle.whistle_api.model.User;
 import whistle.whistle_api.repository.PostRepository;
@@ -19,6 +22,9 @@ import whistle.whistle_api.repository.PostRepository;
 public class PostService {
     @Autowired
     private final PostRepository postRepository;
+
+    @Autowired
+    private final FileStorageService storageService;
 
     public List<PostDto> findPostByUserId(Long userId) {
         List<Post> posts = postRepository.findPostByUserId(userId);
@@ -32,8 +38,10 @@ public class PostService {
         return post.get();
     }
 
-    public Post createPost(User user, String post, String imageUrl) {
-        Post posts = Post.builder().content(post).imageUrl(imageUrl).user(user).createdAt(new Date())
+    public Post createPost(User user, String content, MultipartFile file) throws IOException {
+        FileImage fileImage = storageService.uploadImage(file);
+        Post posts = Post.builder().content(content).imageUrl(fileImage.getFilePath()).user(user).createdAt(new Date())
+                .fileImage(fileImage)
                 .updatedAt(new Date())
                 .build();
         user.getPosts().add(posts);
@@ -47,12 +55,16 @@ public class PostService {
     }
 
     public void deletePost(Long id) {
+        Optional<Post> post = postRepository.findById(id);
+        if (post.isEmpty())
+            throw new NotFoundException("Post ID: " + id);
         postRepository.deleteById(id);
     }
 
     private PostDto mapToPost(Post post) {
-        return PostDto.builder().id(post.getId()).content(post.getContent()).imgeUrl(post.getImageUrl())
+        return PostDto.builder().id(post.getId()).content(post.getContent()).imageUrl(post.getImageUrl())
                 .likeCount(post.getLikeCount()).createdAt(post.getCreatedAt()).updatedAt(post.getUpdatedAt())
+                .imageId(post.getFileImage().getId()).userName(post.getUser().getName())
                 .build();
     }
 

@@ -42,6 +42,10 @@ public class Post {
     @JsonIgnore
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "file_image_id")
+    private FileImage fileImage;
+
     @Column(name = "like_count", nullable = false)
     @Builder.Default
     private Long likeCount = 0L;
