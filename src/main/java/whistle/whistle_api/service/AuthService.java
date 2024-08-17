@@ -33,13 +33,14 @@ public class AuthService {
   @Autowired
   private final JwtService jwtService;
 
-  public User register(String name, String email, String password, String role) {
-    Optional<User> checkUser = userRepository.findByEmail(email);
+  public User register(UserDto userDto) {
+    Optional<User> checkUser = userRepository.findByEmail(userDto.getEmail());
     if (checkUser.isPresent()) {
       throw new ForbiddenException("Email Already");
     }
-
-    User user = User.builder().name(name).email(email).password(passwordEncoder.encode(password)).role(role)
+    User user = User.builder().name(userDto.getName()).email(userDto.getEmail())
+        .password(passwordEncoder.encode(userDto.getPassword())).dob(userDto.getDob()).role(userDto.getRole())
+        .status(true)
         .createAt(new Date()).updateAt(new Date()).build();
     userRepository.save(user);
     return user;
@@ -47,17 +48,15 @@ public class AuthService {
 
   public ResponseAuth login(UserDto userBody) throws RuntimeException {
     try {
-
       var auth = authenticationManager
           .authenticate(new UsernamePasswordAuthenticationToken(userBody.getEmail(), userBody.getPassword()));
-      System.out.println(auth.isAuthenticated());
       if (!auth.isAuthenticated())
         throw new EmailAlreadyExistException();
       Optional<User> user = userRepository.findByEmail(userBody.getEmail());
-      System.out.println("==========================");
       String jwtToken = jwtService.generateToken(user.get());
       String refreshToken = jwtService.generateRefreshToken(user.get());
       ResponseAuth responseAuth = ResponseAuth.builder().accessToken(jwtToken).refreshToken(refreshToken).build();
+
       return responseAuth;
     } catch (Exception e) {
       throw new ForbiddenException(e.getMessage());
@@ -71,9 +70,5 @@ public class AuthService {
     User activateUser = user.get();
     activateUser.setStatus(true);
     userRepository.save(activateUser);
-
-    // User user = userRepository.findById(userId).orElseThrow();
-    // user.setStatus(true);
-    // userRepository.save(user);
   }
 }
