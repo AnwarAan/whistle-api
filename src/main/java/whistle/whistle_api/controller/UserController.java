@@ -11,7 +11,9 @@ import whistle.whistle_api.helper.ExtractUser;
 import whistle.whistle_api.model.User;
 import whistle.whistle_api.service.UserService;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -43,12 +45,18 @@ public class UserController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<ResponseData<User>> findUserById(@PathVariable Long id) {
-    User data = userService.findUserById(id);
+  public ResponseEntity<ResponseData<Optional<UserDto>>> findUserById(@PathVariable Long id) {
+    Optional<UserDto> data = userService.findUserById(id);
     return ResponseEntity.ok(ResponseData.responseSucceess(data));
   }
 
-  @PostMapping()
+  @GetMapping("email/{email}")
+  public ResponseEntity<ResponseData<Optional<UserDto>>> findUserByEmail(@PathVariable String email) {
+    Optional<UserDto> data = userService.findUserByEmail(email);
+    return ResponseEntity.ok(ResponseData.responseSucceess(data));
+  }
+
+  @PostMapping("/upload")
   public ResponseEntity<ResponseData<Object>> uploadImage(HttpServletRequest request,
       @RequestParam("file") MultipartFile file) {
     return ResponseEntity.ok(ResponseData.responseSucceess());
