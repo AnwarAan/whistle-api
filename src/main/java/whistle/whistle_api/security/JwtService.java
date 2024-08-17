@@ -39,7 +39,7 @@ public class JwtService {
   }
 
   public String generateToken(Map<String, Object> extractClaims, UserDetails userDetails) {
-    return buildToken(extractClaims, userDetails, jwtExpiration);
+    return buildToken(extractClaims, userDetails, System.currentTimeMillis() + jwtExpiration);
   }
 
   public String generateRefreshToken(UserDetails userDetails) {
