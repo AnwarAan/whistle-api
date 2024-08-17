@@ -1,5 +1,6 @@
 package whistle.whistle_api.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -47,15 +49,16 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<ResponseData<Object>> createPost(HttpServletRequest request,
-            @RequestParam String post,
-            @RequestParam String imageUrl) {
+            @RequestParam String content,
+            @RequestParam("image") MultipartFile file) throws IOException {
         User user = extractUser.extract(request);
-        postService.createPost(user, post, imageUrl);
+        postService.createPost(user, content, file);
         return ResponseEntity.ok(ResponseData.responseSucceess());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseData<Object>> deletePost(@PathVariable Long id) {
+    public ResponseEntity<ResponseData<?>> deletePost(@PathVariable Long id) {
+        postService.deletePost(id);
         return ResponseEntity.ok(ResponseData.responseSucceess());
     }
 }
