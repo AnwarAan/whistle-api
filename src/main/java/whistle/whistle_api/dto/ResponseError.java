@@ -20,6 +20,14 @@ public class ResponseError {
     return ResponseError.builder().statusCode(HttpStatus.NOT_FOUND.value()).message(msg).build();
   }
 
+  public static ResponseError routeNotFound() {
+    return ResponseError.builder().statusCode(HttpStatus.NOT_FOUND.value()).message("Route Not Found").build();
+  }
+
+  public static ResponseError routeNotFound(String message) {
+    return ResponseError.builder().statusCode(HttpStatus.NOT_FOUND.value()).message(message).build();
+  }
+
   public static ResponseError internalServer() {
     return ResponseError.builder().statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
         .message("Internal Server Error").build();

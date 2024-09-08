@@ -26,12 +26,13 @@ public class UserFollower {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  @JsonIgnore
-  private User user;
+  @JoinColumn(name = "follower_id", unique = true)
+  private User follower;
 
   @ManyToOne
-  @JoinColumn(name = "follower_id", nullable = false)
-  private User follower;
+  @JoinColumn(name = "followed_id", unique = true)
+  private User followed;
+
+  private Boolean status;
 
 }

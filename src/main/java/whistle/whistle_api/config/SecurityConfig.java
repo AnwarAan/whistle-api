@@ -20,7 +20,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfig {
   private static final String[] WHITE_LIST = { "/api/auth/**", "/api/user/**", "/api/post/**", "/api/like/**",
-      "/api/user-follower/**", "/api/upload", "/api/files/**" };
+      "/api/user-follower/**", "/api/upload", "/api/files/**", "/api/test/**" };
   private final JwtAuthFilter jwtAuthFilter;
   private final AuthenticationProvider authenticationProvider;
 

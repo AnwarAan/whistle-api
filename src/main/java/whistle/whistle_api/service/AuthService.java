@@ -36,13 +36,14 @@ public class AuthService {
   public User register(UserDto userDto) {
     Optional<User> checkUser = userRepository.findByEmail(userDto.getEmail());
     if (checkUser.isPresent()) {
-      throw new ForbiddenException("Email Already");
+      throw new ForbiddenException("Email Already Exist");
     }
-    User user = User.builder().name(userDto.getName()).email(userDto.getEmail())
+    User user = User.builder().name(userDto.getName()).nickname(userDto.getNickname()).email(userDto.getEmail())
         .password(passwordEncoder.encode(userDto.getPassword())).dob(userDto.getDob()).role(userDto.getRole())
         .status(true)
         .createAt(new Date()).updateAt(new Date()).build();
     userRepository.save(user);
+
     return user;
   }
 

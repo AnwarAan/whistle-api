@@ -14,6 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   Optional<User> findByEmail(String email);
 
+  Optional<User> findByNickname(String nickname);
+
+  Optional<User> findUserAndFollowersByNickname(String nickname);
+
   @Query("SELECT u FROM User u LEFT JOIN FETCH u.posts")
   List<User> findUserAndPost();
 }

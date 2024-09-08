@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import whistle.whistle_api.dto.UserFollowerDto;
 import whistle.whistle_api.exception.ForbiddenException;
@@ -25,33 +26,52 @@ public class UserFollowerService {
   @Autowired
   private final UserFollowerRepository followerRepository;
 
-  public List<UserFollowerDto> getUserFollower(Long userId) {
-    List<UserFollower> followers = followerRepository.findUserFollowerByUserId(userId);
+  public List<UserFollowerDto> getUserFollower(Long followerId) {
+    List<UserFollower> followers = followerRepository.findByFollowerId(followerId);
     return followers.stream().map(this::mapFollow).toList();
   }
 
-  public void follow(User user, Long followerId) {
-    Optional<User> following = userRepository.findById(followerId);
-    if (!following.isPresent())
+  @Transactional
+  public void follow(User follower, Long followedId) {
+    if (follower.getId() == followedId)
+      throw new ForbiddenException("ID Must Different");
+
+    Optional<User> followed = userRepository.findById(followedId);
+    User updatedFollowed = followed.get();
+    User updatedFollower = follower;
+    Long countFollowed = follower.getTotalFollowed();
+    Long countFollower = followed.get().getTotalFollower();
+    Optional<UserFollower> checkFollow = followerRepository.findByFollowedIdAndFollowerId(followedId, follower.getId());
+    UserFollower follow;
+    if (followed.isEmpty()) {
       throw new NotFoundException();
-    Optional<UserFollower> checkFollow = followerRepository.findUserFollowerByUserIdAndFollowerId(user.getId(),
-        followerId);
-    if (checkFollow.isPresent())
-      throw new ForbiddenException("User has Following");
-    UserFollower follow = UserFollower.builder().user(user).follower(following.get()).build();
-    followerRepository.save(follow);
+    }
+    if (checkFollow.isEmpty()) {
+      updatedFollowed.setTotalFollower(countFollower + 1);
+      updatedFollower.setTotalFollowed(countFollowed + 1);
+      follow = UserFollower.builder().followed(followed.get()).follower(follower)
+          .status(true).build();
+      followerRepository.save(follow);
+    } else if (checkFollow.isPresent() && checkFollow.get().getStatus() == false) {
+      follow = checkFollow.get();
+      follow.setStatus(true);
+      updatedFollowed.setTotalFollower(countFollower + 1);
+      updatedFollower.setTotalFollowed(countFollowed + 1);
+      followerRepository.save(follow);
+    } else if (checkFollow.isPresent() && checkFollow.get().getStatus() == true) {
+      follow = checkFollow.get();
+      follow.setStatus(false);
+      updatedFollowed.setTotalFollower(countFollower - 1);
+      updatedFollower.setTotalFollowed(countFollowed - 1);
+      followerRepository.save(follow);
+    }
+
   }
 
-  public void unfollow(Long userId, Long followerId) {
-    Optional<UserFollower> checkFollow = followerRepository.findUserFollowerByUserIdAndFollowerId(userId, followerId);
-    if (!checkFollow.isPresent())
-      throw new ForbiddenException("User has Unfollowing");
-    followerRepository.deleteUserFollowerByUserIdAndFollowerId(userId, followerId);
-  }
-
-  private UserFollowerDto mapFollow(UserFollower follow) {
-    return UserFollowerDto.builder().id(follow.getId()).userId(follow.getUser().getId())
-        .name(follow.getFollower().getName()).followerId(follow.getFollower().getId())
+  private UserFollowerDto mapFollow(UserFollower userFollower) {
+    return UserFollowerDto.builder().id(userFollower.getId())
+        .followedId(userFollower.getFollowed().getId()).followerId(userFollower.getFollower().getId())
+        .status(userFollower.getStatus())
         .build();
   }
 }

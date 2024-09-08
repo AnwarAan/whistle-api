@@ -20,8 +20,8 @@ public class TestService {
   @Autowired
   private final PasswordEncoder passwordEncoder;
 
-  public void addUser(String name, String email, String password, LocalDate dob, String role) {
-    User user = User.builder().name(name).email(email)
+  public void addUser(String name, String nickname, String email, String password, LocalDate dob, String role) {
+    User user = User.builder().name(name).nickname(nickname).email(email)
         .password(passwordEncoder.encode(password)).dob(dob).role(role)
         .status(true)
         .createAt(new Date()).updateAt(new Date()).build();

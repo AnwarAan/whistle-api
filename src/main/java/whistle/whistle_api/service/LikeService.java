@@ -32,13 +32,24 @@ public class LikeService {
     return likes;
   }
 
+  @Transactional
   public void likePost(User user, Long postId) {
+    Optional<Like> chekLike = likeRepository.findByPostIdAndUserId(postId, user.getId());
+    Post post = postService.findPostById(postId);
+    if (chekLike.isEmpty()) {
+      Like like = Like.builder().user(user).post(post).status(true).build();
+      likeRepository.save(like);
+    } else if (chekLike.isPresent() && chekLike.get().getStatus() == false) {
+      Like like = chekLike.get();
+      like.setStatus(true);
+    } else if (chekLike.isPresent() && chekLike.get().getStatus() == true) {
+      Like like = chekLike.get();
+      like.setStatus(false);
+    }
     if (likeRepository.existsByUserIdAndPostIdUsingQuery(user.getId(), postId)) {
       throw new ForbiddenException("User has Linked to Post");
     } else {
-      Post post = postService.findPostById(postId);
-      Like like = Like.builder().user(user).post(post).build();
-      likeRepository.save(like);
+
       post.setLikeCount(post.getLikeCount() + 1);
       postService.updatePost(post);
     }

@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,7 +20,7 @@ import whistle.whistle_api.model.User;
 import whistle.whistle_api.service.UserFollowerService;
 
 @RestController
-@RequestMapping("/api/follow")
+@RequestMapping("/api/user-follower")
 @RequiredArgsConstructor
 public class UserFollowerController {
 
@@ -37,17 +37,12 @@ public class UserFollowerController {
     return ResponseEntity.ok(ResponseData.responseSucceess(follows));
   }
 
-  @PostMapping("/follow")
-  public ResponseEntity<ResponseData<Object>> follow(HttpServletRequest request, @RequestParam Long followerId) {
+  @PostMapping("/follow/{followedId}")
+  public ResponseEntity<ResponseData<Object>> follow(HttpServletRequest request,
+      @PathVariable Long followedId) {
     User user = extractUser.extract(request);
-    followService.follow(user, followerId);
+    followService.follow(user, followedId);
     return ResponseEntity.ok(ResponseData.responseSucceess());
   }
 
-  @DeleteMapping("/unfollow")
-  public ResponseEntity<ResponseData<Object>> unfollow(HttpServletRequest request, @RequestParam Long followerId) {
-    User user = extractUser.extract(request);
-    followService.unfollow(user.getId(), followerId);
-    return ResponseEntity.ok(ResponseData.responseSucceess());
-  }
 }

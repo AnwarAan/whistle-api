@@ -36,4 +36,6 @@ public class Like {
   @JsonIgnore
   private Post post;
 
+  private Boolean status;
+
 }

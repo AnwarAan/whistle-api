@@ -11,6 +11,18 @@ import whistle.whistle_api.dto.ResponseError;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+  @ExceptionHandler(NullPointerException.class)
+  public ResponseEntity<ResponseError> handleNullPointerException(Exception ex) {
+    ResponseError responseError = ResponseError.notFound(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseError);
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<ResponseError> handleException(Exception ex) {
+    ResponseError responseError = ResponseError.routeNotFound(ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseError);
+  }
+
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ResponseError> handleNotFoundException(NotFoundException ex) {
     ResponseError responseError = ResponseError.notFound(ex.getMessage());

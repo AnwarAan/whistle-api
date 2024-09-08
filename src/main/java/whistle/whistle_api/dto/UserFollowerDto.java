@@ -8,6 +8,7 @@ import lombok.Data;
 public class UserFollowerDto {
   private final Long id;
   private final String name;
-  private final Long userId;
+  private final Long followedId;
   private final Long followerId;
+  private final Boolean status;
 }

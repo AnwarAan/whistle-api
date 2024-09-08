@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -22,6 +24,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -33,8 +36,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "m_user")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class User implements UserDetails {
   @Id
@@ -45,7 +48,7 @@ public class User implements UserDetails {
   private String name;
 
   @Column(unique = true, nullable = false)
-  private String username;
+  private String nickname;
 
   @Column(unique = true, nullable = false)
   private String email;
@@ -61,12 +64,21 @@ public class User implements UserDetails {
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private LocalDate dob;
 
-  @Builder.Default
-  @Column(nullable = false)
-  private Boolean status = false;
+  private Boolean status;
 
-  @OneToMany(mappedBy = "follower", fetch = FetchType.LAZY)
-  private List<UserFollower> follower;
+  @Builder.Default
+  @Column(name = "total_follower")
+  private Long totalFollower = 0L;
+
+  @Builder.Default
+  @Column(name = "total_followed")
+  private Long totalFollowed = 0L;
+
+  @OneToMany(mappedBy = "followed", cascade = CascadeType.ALL)
+  private List<UserFollower> followers;
+
+  @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL)
+  private List<UserFollower> following;
 
   @ManyToOne
   @JoinColumn(name = "file_image_id")

@@ -1,13 +1,10 @@
 package whistle.whistle_api.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,7 +42,23 @@ public class UserService {
       throw new NotFoundException("User");
     else
       return List.of(user.get()).stream().map(this::mapUser).findFirst();
+  };
 
+  public UserDto findUserByNickname(String nickname) {
+    Optional<User> user = userRepository.findUserAndFollowersByNickname(nickname);
+    if (user.isEmpty())
+      throw new NotFoundException("User");
+    else {
+      UserDto userDto = UserDto.builder().id(user.get().getId()).name(user.get().getName())
+          .nickname(user.get().getNickname())
+          .email(user.get().getEmail())
+          .role(user.get().getRole())
+          .status(user.get().getStatus())
+          .followed(user.get().getTotalFollower())
+          .follower(user.get().getTotalFollowed())
+          .createdAt(user.get().getCreateAt()).updatedAt(user.get().getUpdateAt()).build();
+      return userDto;
+    }
   };
 
   public void updateUser(User user, UserDto userDto) {
@@ -68,7 +81,10 @@ public class UserService {
   }
 
   private UserDto mapUser(User user) {
-    return UserDto.builder().id(user.getId()).name(user.getName()).email(user.getEmail()).role(user.getRole())
+    return UserDto.builder().id(user.getId()).name(user.getName()).nickname(user.getNickname()).email(user.getEmail())
+        .followed(user.getTotalFollowed())
+        .follower(user.getTotalFollower())
+        .role(user.getRole())
         .status(user.getStatus())
         .createdAt(user.getCreateAt()).updatedAt(user.getUpdateAt()).build();
   }

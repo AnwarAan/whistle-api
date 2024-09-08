@@ -11,7 +11,6 @@ import whistle.whistle_api.helper.ExtractUser;
 import whistle.whistle_api.model.User;
 import whistle.whistle_api.service.UserService;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,8 +55,15 @@ public class UserController {
     return ResponseEntity.ok(ResponseData.responseSucceess(data));
   }
 
+  @GetMapping("/nickname/{nickname}")
+  public ResponseEntity<ResponseData<UserDto>> findUserByNickname(HttpServletRequest request,
+      @PathVariable String nickname) {
+    UserDto data = userService.findUserByNickname(nickname);
+    return ResponseEntity.ok(ResponseData.responseSucceess(data));
+  }
+
   @PostMapping("/upload")
-  public ResponseEntity<ResponseData<Object>> uploadImage(HttpServletRequest request,
+  public ResponseEntity<ResponseData<?>> uploadImage(HttpServletRequest request,
       @RequestParam("file") MultipartFile file) {
     return ResponseEntity.ok(ResponseData.responseSucceess());
   }

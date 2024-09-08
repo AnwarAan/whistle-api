@@ -13,10 +13,13 @@ import lombok.Data;
 public class UserDto {
   private final Long id;
   private final String name;
+  private final String nickname;
   private final String email;
   private final String password;
   private final String imageUrl;
   private final String imageId;
+  private final Long followed;
+  private final Long follower;
   @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
   private final LocalDate dob;
   private final String role;
