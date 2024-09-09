@@ -18,7 +18,7 @@ public class PostDto {
   private final MultipartFile file;
   private final Date createdAt;
   private final Date updatedAt;
-  private final String userName;
+  private final String username;
   private final Long userImageId;
 
 }

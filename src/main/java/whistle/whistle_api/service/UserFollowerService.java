@@ -65,7 +65,14 @@ public class UserFollowerService {
       updatedFollower.setTotalFollowed(countFollowed - 1);
       followerRepository.save(follow);
     }
+  }
 
+  public Boolean currentFollow(User follower, Long followedId) {
+    Optional<UserFollower> getLike = followerRepository.findByFollowedIdAndFollowerId(followedId, follower.getId());
+    if (getLike.isEmpty())
+      return false;
+    else
+      return getLike.get().getStatus();
   }
 
   private UserFollowerDto mapFollow(UserFollower userFollower) {

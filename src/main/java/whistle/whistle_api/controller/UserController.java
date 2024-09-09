@@ -13,6 +13,7 @@ import whistle.whistle_api.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
 @RequestMapping("/api/user")
@@ -56,20 +56,22 @@ public class UserController {
   }
 
   @GetMapping("/nickname/{nickname}")
-  public ResponseEntity<ResponseData<UserDto>> findUserByNickname(HttpServletRequest request,
+  public ResponseEntity<ResponseData<Optional<UserDto>>> findUserByNickname(HttpServletRequest request,
       @PathVariable String nickname) {
-    UserDto data = userService.findUserByNickname(nickname);
+    Optional<UserDto> data = userService.findUserByNickname(nickname);
     return ResponseEntity.ok(ResponseData.responseSucceess(data));
   }
 
   @PostMapping("/upload")
   public ResponseEntity<ResponseData<?>> uploadImage(HttpServletRequest request,
-      @RequestParam("file") MultipartFile file) {
+      @RequestParam("image") MultipartFile image) throws IOException {
+    User user = extractUser.extract(request);
+    userService.uploadImage(user, image);
     return ResponseEntity.ok(ResponseData.responseSucceess());
   }
 
-  @PutMapping()
-  public @ResponseBody ResponseEntity<ResponseData<Object>> updateUser(HttpServletRequest request,
+  @PutMapping
+  public ResponseEntity<ResponseData<Object>> updateUser(HttpServletRequest request,
       @RequestBody UserDto userDto) {
     User user = extractUser.extract(request);
     userService.updateUser(user, userDto);

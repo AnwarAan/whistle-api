@@ -46,9 +46,9 @@ public class Post {
     @JoinColumn(name = "file_image_id")
     private FileImage fileImage;
 
-    @Column(name = "like_count", nullable = false)
+    @Column(name = "total_like", nullable = false)
     @Builder.Default
-    private Long likeCount = 0L;
+    private Long totalLike = 0L;
 
     @CreatedDate
     @Column(updatable = false, name = "created_at")

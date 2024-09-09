@@ -44,21 +44,13 @@ public class UserService {
       return List.of(user.get()).stream().map(this::mapUser).findFirst();
   };
 
-  public UserDto findUserByNickname(String nickname) {
+  public Optional<UserDto> findUserByNickname(String nickname) {
     Optional<User> user = userRepository.findUserAndFollowersByNickname(nickname);
     if (user.isEmpty())
       throw new NotFoundException("User");
-    else {
-      UserDto userDto = UserDto.builder().id(user.get().getId()).name(user.get().getName())
-          .nickname(user.get().getNickname())
-          .email(user.get().getEmail())
-          .role(user.get().getRole())
-          .status(user.get().getStatus())
-          .followed(user.get().getTotalFollower())
-          .follower(user.get().getTotalFollowed())
-          .createdAt(user.get().getCreateAt()).updatedAt(user.get().getUpdateAt()).build();
-      return userDto;
-    }
+    else
+      return List.of(user.get()).stream().map(this::mapUser).findFirst();
+
   };
 
   public void updateUser(User user, UserDto userDto) {
@@ -69,11 +61,16 @@ public class UserService {
     userRepository.save(updatedUser);
   }
 
-  public void uploadImageUser(User user, MultipartFile file) throws IOException {
+  public void uploadImage(User user, MultipartFile file) throws IOException {
+    Optional<User> getuser = userRepository.findById(user.getId());
+    User updateUser = user;
+    if (getuser.isEmpty())
+      throw new NotFoundException();
+
     FileImage fileImage = fileStorageService.uploadImage(file);
-    User upadtedUser = user;
-    upadtedUser.setImageUrl(fileImage.getFilePath());
-    userRepository.save(upadtedUser);
+    updateUser.setFileImage(fileImage);
+    updateUser.setImageUrl(fileImage.getFilePath());
+    userRepository.save(updateUser);
   }
 
   public void deleteUser(Long id) {
@@ -84,7 +81,13 @@ public class UserService {
     return UserDto.builder().id(user.getId()).name(user.getName()).nickname(user.getNickname()).email(user.getEmail())
         .followed(user.getTotalFollowed())
         .follower(user.getTotalFollower())
+        .dob(user.getDob())
+        .imageUrl(user.getImageUrl())
+        .imageId(user.getFileImage() == null ? null : user.getFileImage().getId())
         .role(user.getRole())
+        .status(user.getStatus())
+        .followed(user.getTotalFollowed())
+        .follower(user.getTotalFollower())
         .status(user.getStatus())
         .createdAt(user.getCreateAt()).updatedAt(user.getUpdateAt()).build();
   }

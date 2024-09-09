@@ -50,7 +50,7 @@ public class PostService {
     }
 
     public void updatePost(Post post) {
-        Post posts = Post.builder().likeCount(post.getLikeCount()).build();
+        Post posts = Post.builder().totalLike(post.getTotalLike()).build();
         postRepository.save(posts);
     }
 
@@ -63,8 +63,10 @@ public class PostService {
 
     private PostDto mapToPost(Post post) {
         return PostDto.builder().id(post.getId()).content(post.getContent()).imageUrl(post.getImageUrl())
-                .likeCount(post.getLikeCount()).createdAt(post.getCreatedAt()).updatedAt(post.getUpdatedAt())
-                .imageId(post.getFileImage().getId()).userName(post.getUser().getName())
+                .likeCount(post.getTotalLike()).createdAt(post.getCreatedAt()).updatedAt(post.getUpdatedAt())
+                .imageId(post.getFileImage() == null ? null : post.getFileImage().getId())
+                .username(post.getUser().getName())
+                .userImageId(post.getUser().getFileImage() == null ? null : post.getUser().getFileImage().getId())
                 .build();
     }
 

@@ -15,12 +15,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "t_like")
+@Table(name = "t_like_post")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Like {
+public class LikePost {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
